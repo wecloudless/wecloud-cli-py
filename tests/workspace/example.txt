@@ -1,0 +1,121 @@
+# 1. Set up Environment
+
+# Make sure you have cuda-11.7 installed WITHOUT CONDA!!
+# (because cuda in conda lacks certain libraries for building mmcv)
+# Also you need correct CuDNN version compatible with cuda 11.7
+# And when you get cuda ready, do the followings:
+
+apt-get install libcudnn8 libcudnn8-dev  # Can skip this if CuDNN is already set up
+
+conda create -n test python=3.9 -y
+conda activate test
+
+pip install torch torchvision torchaudio  # Should automatically install GPU version
+
+# Check cuda availability with:
+# $ python -c "import torch; print(torch.cuda.is_available())"
+# And the result should be "True".
+
+
+# 2. Video TSM Model
+
+# 1) Install dependency
+cd mmaction2_railway/
+pip install -r requirements.txt
+pip install -U openmim
+mim install mmcv-full==1.5.0  # Very slow (~15min), so be patient
+pip install --upgrade numpy==1.23  # Actually DOWNGRADE numpy to avoid incompatibility
+pip install scipy einops imgaug decord tqdm
+
+# 2) Modify config and script
+# Config example:
+
+vim configs/railway_action/tsm_action25_230216.py  # A possible config file, could be changed to your own files
+
+  # Modify these paths to your own dataset and pretrained model
+  # - Dataset
+  data_root = '<path_to_your_dir>/action_temp/videos/'
+  data_root_val = '<path_to_your_dir>/action_temp/videos/'
+  ann_file_train = '<path_to_your_dir>/action_temp/train.txt'
+  ann_file_val = '<path_to_your_dir>/action_temp/val.txt'
+  ann_file_test = '<path_to_your_dir>/action_temp/val.txt'
+  # - Pretrained model
+  load_from = '<path_to_your_pretrained_model>/tsm_r50_340x256_1x1x16_50e_kinetics400_rgb_20201011-2f27f229.pth'
+  # Also, modify batch size (videos_per_gpu) if needed
+  videos_per_gpu=8
+
+  # Script example:
+
+  vim bin/start_train_multi.sh
+
+  # Modify these paths to your own temporary training directory and config file
+  train_dir=<path_for_temp_training>/20230314_25class_action_test/
+  config_file=<path_to_your_dir>/mmaction2_railway/configs/railway_action/tsm_action25_230216.py
+
+  # You may also want to modify the CUDA_VISIBLE_DEVICES and the number of GPUs used by this script
+  export CUDA_VISIBLE_DEVICES=0,1  # Indices of GPUs used
+  tools/dist_train.sh \
+    $config_file \
+    <gpu_count> \
+    --validate \
+    --work-dir=$train_dir \
+    2>&1 | tee $train_dir/train.log
+
+# 3) Start training
+chmod +x bin/*.sh
+./bin/start_train_multi.sh
+
+
+# 3. Image CenterNet model
+
+# 1) Install framework
+cd <path_to_your_dir>/tensorflow_models/research
+pip install .
+
+# 2) Downgrade certain packages for compatibility
+pip install --upgrade tf-models-official==2.5.1
+pip install --upgrade tensorflow==2.6
+pip install --upgrade keras==2.6
+pip install --upgrade matplotlib==3.5
+pip install --upgrade numpy==1.19.5
+
+# 3) Install modified pycocotools for evaluation
+cd <path_to_your_dir>/pycocotools-2.1.0
+pip install -y Cython
+pip install .
+
+# 4) Modify config
+
+vim <path_to_your_dir>/tensorflow_models/research/object_detection/configs/railway/centernet_railway_9class_230202.config
+
+  # Modify these paths to your own dataset and pretrained model
+  train {
+    fine_tune_checkpoint: "<path_to_your_dir>/tensorflow_models/models/centernet_resnet50_v1_fpn_512x512_coco17_tpu-8/checkpoint/ckpt-0"
+  }
+  train_input_reader {
+    label_map_path: "<path_to_your_dir>/tensorflow_models/research/object_detection/data/railway_label_map_9classes.pbtxt"
+    tf_record_input_reader {
+      input_path: "<path_to_your_dir>/image_tfrecord/train/*"
+    }
+  }
+  eval_input_reader {
+    label_map_path: "<path_to_your_dir>/tensorflow_models/research/object_detection/data/railway_label_map_9classes.pbtxt"
+    tf_record_input_reader {
+      input_path: "<path_to_your_dir>/image_tfrecord/val/*"
+    }
+  }
+
+# 5) Start training
+cd tensorflow_models/research/object_detection/railway/fine-tune/
+./run_train.sh \
+ <path_for_temp_training>/230314_9class_test \
+ <path_to_your_dir>/tensorflow_models/research/object_detection/configs/railway/centernet_railway_9class_230202.config \
+ 0
+
+
+
+
+
+
+
+

@@ -1,0 +1,8 @@
+image: nvidia/cuda:12.1.0-runtime-ubuntu18.04
+
+
+setup: |
+  pip install -r requirements.txt
+
+run: |
+  echo "hello world"
