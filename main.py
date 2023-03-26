@@ -51,8 +51,10 @@ def deploy(path: str, job: str):
         resp_json = resp.json()
         if resp_json["status"]:
             click.echo("Deploying model to WeCloud successfully")
+            click.echo("----------------------------------------")
             click.echo(
-                f"""Please visit the following address: "http://101.42.238.229/#/create-deployment". Once there, select the task "{resp_json['data']['orch_id']}" labeled as "profiling".""")
+                f"""Please visit the following address: "http://101.42.238.229/#/create-deployment". Once there, 
+select the task "{resp_json['data']['orch_id']}" labeled as "profiling".""")
         else:
             click.echo(f"Deploying model to WeCloud failed, {resp_json['message']}")
     else:
