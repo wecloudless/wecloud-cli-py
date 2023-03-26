@@ -1,0 +1,33 @@
+# wecloud-job.yaml
+orch_type: job
+
+job_name: wecloud-train-gpu
+
+# image id
+image: registry.cn-beijing.aliyuncs.com/yangchengxu/wecloud_train_test_job:v0.1.0
+# 工作目录workdir
+workdir: /workspace
+
+# 任务运行命令
+# 将在workdir下被调用
+run: |
+  python
+  -u
+  train.py
+  --net
+  mobilenetv2
+  --gpu
+
+
+# profile命令，注意对于不同类型的编排（job，service），该命令的调用逻辑不同
+# 对于job任务，直接调用一次该命令为一次profile
+# 对于service任务，应先运行run命令（即先启动服务），随后每调用一次该命令为一次profile
+profile: |
+  python
+  -u
+  train.py
+  --net
+  mobilenetv2
+  --gpu
+  --profiling
+    

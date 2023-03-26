@@ -1,8 +1,17 @@
-image: nvidia/cuda:12.1.0-runtime-ubuntu18.04
+#image: nvidia/cuda:12.1.0-runtime-ubuntu18.04
+#image: nvidia/cuda:12.1.0-devel-ubuntu18.04
+image: python:3.10
+#image:  registry.cn-beijing.aliyuncs.com/yangchengxu/wecloud_train_test_job:v0.1.0
 
 
 setup: |
-  pip install -r requirements.txt
+  uname -a
+  echo "hello world"
+  python3 --version
+  pip3 install -r requirements.txt
 
 run: |
-  echo "hello world"
+  echo "hello world" 
+
+profile: |
+  echo "hello world, profile" 
