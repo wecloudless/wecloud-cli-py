@@ -6,6 +6,7 @@ import math
 import os
 import tarfile
 import time
+import webbrowser
 
 import click
 import requests
@@ -18,6 +19,7 @@ log = logging.getLogger(__name__)
 class CONFIG:
     # base_url = "http://127.0.0.1:8081"
     base_url = "https://hz-4.matpool.com:27680"
+    deploy_url = "http://101.42.238.229/#/create-deployment"
 
 
 @click.group()
@@ -53,8 +55,9 @@ def deploy(path: str, job: str):
             click.echo("Deploying model to WeCloud successfully")
             click.echo("----------------------------------------")
             click.echo(
-                f"""Please visit the following address: "http://101.42.238.229/#/create-deployment". Once there, 
+                f"""Please visit the following address: "{CONFIG.deploy_url}". Once there, 
 select the task "{resp_json['data']['orch_id']}" labeled as "profiling".""")
+            webbrowser.open(f"{CONFIG.deploy_url}?orch_id={resp_json['data']['orch_id']}")
         else:
             click.echo(f"Deploying model to WeCloud failed, {resp_json['message']}")
     else:
