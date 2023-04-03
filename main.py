@@ -124,15 +124,13 @@ def deploy(path: str, job: str):
                                     headers={
                                         'Authorization': 'Bearer ' + _get_token(),
                                     })
+        log.debug(orch_id_resp.json())
         orch_id = orch_id_resp.json()["data"]["orch_id"]
         click.echo(
             f"""Please visit the following address: "{CONFIG.deploy_url}". Once there, 
 select the task "{orch_id}" labeled as "profiling".""")
         webbrowser.open(f"{CONFIG.deploy_url}?orch_id={orch_id}")
 
-
-# else:
-# click.echo(f"Deploying model to Serverless Pilot failed,{resp.status_code}, {resp.text}")
 
 if __name__ == "__main__":
     cli()
