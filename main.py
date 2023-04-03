@@ -90,6 +90,7 @@ def deploy(path: str, job: str):
         tar.add(os.path.join(os.getcwd(), path), arcname="")
     click.echo("Packaging project successfully")
 
+    click.echo("----------------------------------------")
     click.echo("Deploying model to Serverless Pilot...")
     resp = requests.post(CONFIG.base_url + "/cli/deploy",
                          headers={
@@ -104,7 +105,6 @@ def deploy(path: str, job: str):
         resp_json = resp.json()
         cli_id = resp_json["data"]["cli_id"]
         log.debug("cli_id: {}".format(cli_id))
-        click.echo("----------------------------------------")
         status = ""
         while True:
             status_resp = requests.get(f"{CONFIG.base_url}/cli/status/{cli_id}",
