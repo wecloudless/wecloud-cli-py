@@ -1,8 +1,5 @@
-#image: nvidia/cuda:12.1.0-runtime-ubuntu18.04
-#image: nvidia/cuda:12.1.0-devel-ubuntu18.04
 image: python:3.10
-#image:  registry.cn-beijing.aliyuncs.com/yangchengxu/wecloud_train_test_job:v0.1.0
-
+job_name: test
 
 setup: |
   uname -a
