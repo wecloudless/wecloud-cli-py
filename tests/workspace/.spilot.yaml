@@ -1,6 +1,6 @@
-#image: python:3.10
+#image: pytorch/pytorch:1.9.0-cuda10.2-cudnn7-runtime
 image: wangqipeng/wecloud_train:v0.2.0
-job_name: test
+job_name: helloworld-fm
 
 setup: |
   uname -a
@@ -9,7 +9,18 @@ setup: |
   pip3 install -r requirements.txt
 
 run: |
-  echo "hello world" 
+  python 
+  -u 
+  train.py 
+  --net 
+  mobilenetv2 
+  --gpu
 
 profile: |
-  echo "hello world, profile" 
+  python 
+  -u 
+  train.py 
+  --net 
+  mobilenetv2 
+  --gpu 
+  --profiling
