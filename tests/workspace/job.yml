@@ -4,7 +4,9 @@ orch_type: job
 job_name: wecloud-train-gpu
 
 # image id
-image: registry.cn-beijing.aliyuncs.com/yangchengxu/wecloud_train_test_job:v0.1.0
+#image: registry.cn-beijing.aliyuncs.com/yangchengxu/wecloud_train_test_job:v0.1.0
+image: wangqipeng/wecloud_train:v0.2.0
+
 # 工作目录workdir
 workdir: /workspace
 
