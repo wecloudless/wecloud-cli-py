@@ -36,6 +36,7 @@ def _get_token():
         token = _login()
     return token
 
+
 def _login():
     """Login to Serverless Pilot"""
     click.echo("Login to Serverless Pilot")
@@ -71,6 +72,7 @@ def cli(config: str):
 @cli.command()
 def login():
     _login()
+
 
 @cli.command()
 @click.option("--path", default=".", help="Path to the project.")
@@ -143,7 +145,7 @@ def deploy(path: str, job: str):
         status = ""
         while True:
             _token = _get_token()
-            if _token is None: 
+            if _token is None:
                 click.echo("Login failed, exit. Please re-login and retry.")
                 exit()
             status_resp = requests.get(f"{CONFIG.base_url}/cli/status/{cli_id}",
@@ -165,7 +167,8 @@ def deploy(path: str, job: str):
                                     })
         log.debug(orch_id_resp.json())
         orch_id = orch_id_resp.json()["data"]["orch_id"]
-        click.echo(f'Please visit the following address: "{CONFIG.deploy_url}". Once there, select the task "{orch_id}" labeled as "profiling".')
+        click.echo(
+            f'Please visit the following address: "{CONFIG.deploy_url}". Once there, select the task "{orch_id}" labeled as "profiling".')
         webbrowser.open(f"{CONFIG.deploy_url}?orch_id={orch_id}")
     else:
         click.echo("upload orch faild.")
