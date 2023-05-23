@@ -20,7 +20,7 @@ log = logging.getLogger(__name__)
 
 class CONFIG:
     # base_url = "http://127.0.0.1:8081"
-    # base_url = "https://hz-4.matpool.com:26263"
+    # base_url = "https://hz-t2.matpool.com:27075"
     # deploy_url = "http://101.42.238.229/#/create-deployment"
     base_url = "http://115.27.161.208/api/v1"
     deploy_url = "http://115.27.161.208/#/create-deployment"
