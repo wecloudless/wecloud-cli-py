@@ -7,7 +7,6 @@ import os
 import tarfile
 import time
 import webbrowser
-import re
 
 import click
 import requests
@@ -118,9 +117,6 @@ def deploy(path: str, job: str):
         except ParserError as e:
             click.echo("yaml format is not correct, exit")
             exit()
-    pattern = re.compile(r">\s+/app/output/a.log\s+2>&1$")
-    if not re.findall(pattern, meta_data_dict["run"]):
-        meta_data_dict["run"] = meta_data_dict["run"] + "> /app/output/a.log 2>&1"
     meta_data_dict["run"] = meta_data_dict["run"].split()
     meta_data_dict["profile"] = meta_data_dict["run"].copy()
     print("meta_data_dict", meta_data_dict)
