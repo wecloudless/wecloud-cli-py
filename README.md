@@ -19,6 +19,18 @@ ServerlessPilot的使用主要包含四部分
 
 ### 训练代码开发
 
+#### 任务日志
+为了支持任务profiling和提供必要的调度信息，训练代码需要包含一定格式的任务日志。开发者需要在每次迭代结束处输出下述格式的日志信息，以使用python logging库为例：
+```Python
+  # in the end of one iteration
+  logging.info("epoch = {epoch}, iteration = {iteration}, trained_samples = {trained_samples}, total_samples = {total_samples}, loss = {loss}, lr = {lr}, current_epoch_wall-clock_time = {current_epoch_time}")
+  if args.profiling:
+      logging.info(f"PROFILING: dataset total number {len(dataloader.dataset)}, training one batch costs {one_batch_time} seconds")
+      return
+```
+较高打印日志的频率可以提高profiling和调度的精确度，较低打印日志的频率可以降低日志量，开发者可自行决定日志的打印频率。
+
+#### 弹性训练
 为了支持弹性训练和间断训练，训练代码需要支持断点。开发者需要将每个epoch的模型参数存储在开发者指定的固定位置，并将文件名命名为指定的格式：
 ```Python
 weights_path = checkpoint_path.format(net=args.net, epoch=epoch, type='regular')
