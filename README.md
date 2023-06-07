@@ -10,11 +10,59 @@
 
 ## 如何使用 ServerlessPilot
 
-ServerlessPilot的使用主要包含两部分
+ServerlessPilot的使用主要包含四部分
 
+- 训练代码开发
 - 使用命令行工具上传任务
 - 在网页端部署任务
 - 在网页端监控任务
+
+### 训练代码开发
+
+为了支持弹性训练和间断训练，训练代码需要支持断点。开发者需要将每个epoch的模型参数存储在开发者指定的固定位置，并将文件名命名为指定的格式：
+```Python
+weights_path = checkpoint_path.format(net=args.net, epoch=epoch, type='regular')
+torch.save(net.state_dict(), weights_path)
+```
+开始训练之前需要先保证该指定路径存在：
+```Python
+#prepare folder
+cmd = 'mkdir -p ' + os.path.join(settings.CHECKPOINT_PATH, args.net)
+#python 2.7 & 3
+ret = subprocess.check_output(cmd, shell=True)
+```
+然后从这个开发者指定的路径读取最新的模型权重以及训练进度信息：
+```Python
+best_acc = 0.0
+recent_folder = most_recent_folder(os.path.join(settings.CHECKPOINT_PATH, args.net), fmt=settings.DATE_FORMAT)
+if not recent_folder:
+        resume_epoch = 0
+        checkpoint_path = os.path.join(settings.CHECKPOINT_PATH, args.net, settings.TIME_NOW)
+    else:
+        resume_epoch = last_epoch(os.path.join(settings.CHECKPOINT_PATH, args.net, recent_folder))
+        best_weights = best_acc_weights(os.path.join(settings.CHECKPOINT_PATH, args.net, recent_folder))
+        if best_weights:
+            weights_path = os.path.join(settings.CHECKPOINT_PATH, args.net, recent_folder, best_weights)
+            logging.info('found best acc weights file:{}'.format(weights_path))
+            logging.info('load best training file to test acc...')
+            net.load_state_dict(torch.load(weights_path))
+            best_acc = eval_training(tb=False)
+            logging.info('best acc is {:0.2f}'.format(best_acc))
+        recent_weights_file = most_recent_weights(os.path.join(settings.CHECKPOINT_PATH, args.net, recent_folder))
+        if not recent_weights_file:
+            raise Exception('no recent weights file were found')
+        weights_path = os.path.join(settings.CHECKPOINT_PATH, args.net, recent_folder, recent_weights_file)
+        logging.info('loading weights file {} to resume training.....'.format(weights_path))
+        net.load_state_dict(torch.load(weights_path))
+
+        checkpoint_path = os.path.join(settings.CHECKPOINT_PATH, args.net, recent_folder)
+```
+训练时需从上一次保存权重的进度继续训练：
+```Python
+for epoch in range(1, args.epoch + 1):
+    if epoch <= resume_epoch:
+        continue
+```
 
 ### 使用命令行工具上传
 
