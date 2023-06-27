@@ -273,4 +273,5 @@ for epoch in range(1, args.epoch + 1):
 
 我们提供了一个端到端的示例，以展示`ServerlessPilot`的运行工作流程。您可以[点击这里](https://disk.pku.edu.cn:443/link/CC7619B71190026088E7B1D8FC206C55)查看示例。
 
-
+## 问题反馈
+如果在使用CLI的时候遇到问题，请按照[该样例](https://github.com/wecloudless/wecloud-cli-py/issues/1)提交repo进行反馈。
