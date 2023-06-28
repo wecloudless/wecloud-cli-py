@@ -19,6 +19,13 @@ ServerlessPilot的使用主要包含四部分
 
 ### 训练代码开发
 
+#### 环境要求
+`ServerlessPilot`提供较为灵活的执行环境。除python和pytorch版本限制外，其他依赖可自行指定，其他依赖需写入`<your_job>/requirements.txt`。
+```
+python=3.7
+pytorch=1.9 or 1.12
+```
+
 #### 任务日志
 为了支持任务profiling和提供必要的调度信息，训练代码需要包含一定格式的任务日志。开发者需要在每次迭代结束处输出下述格式的日志信息，以使用python logging库为例：
 ```Python
