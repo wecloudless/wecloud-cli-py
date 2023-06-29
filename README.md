@@ -192,6 +192,8 @@ for epoch in range(1, args.epoch + 1):
 
   **⚠️注意⚠️**：关于数据，请同样放在`<workspace relative path>`文件夹内。（目前会把数据一起打包进image，后续会支持将数据上传到nfs以减小image大小）
 
+  **⚠️注意⚠️**：job name中不能带有下划线“_”，否则后续k8s会报错！
+
   ```yaml
   run: 
     python -u train.py --net googlenet --gpu
