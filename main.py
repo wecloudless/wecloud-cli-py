@@ -117,16 +117,11 @@ def deploy(path: str, job: str):
         except ParserError as e:
             click.echo("yaml format is not correct, exit")
             exit()
-    # print("1111", type(meta_data_dict["run"]), meta_data_dict["run"])
     meta_data_dict["run"] = meta_data_dict["run"].split()
     # meta_data_dict["run"] = [x+'\n' if "\n" not in x else x for x in meta_data_dict["run"] ]
     meta_data_dict["run"] = '\n'.join(meta_data_dict["run"])+"\n"
-    # print("2222", type(meta_data_dict["run"]), meta_data_dict["run"])
     meta_data_dict["profile"] = meta_data_dict["run"]
-    # meta_data_dict["profile"] = meta_data_dict["run"].copy()
-    # print("meta_data_dict", meta_data_dict)
     saved_spilot_fn = "/tmp/new.spilot-{}.yaml".format(_deploy_ts)
-    # saved_spilot_fn=spilot_fn
     with open(saved_spilot_fn, "w") as f:
         yaml.dump(meta_data_dict, f)
     click.echo("save to {}".format(saved_spilot_fn))
@@ -137,11 +132,7 @@ def deploy(path: str, job: str):
         log.debug("path: {}".format(path))
         tar.add(os.path.join(os.getcwd(), path), arcname="")
         tar.add(saved_spilot_fn, arcname="new.spilot.yaml")
-        # print(os.path.join(os.getcwd(), path))
     click.echo("Packaging project successfully")
-    # time.sleep(3)
-    # print(tmp_file_name)
-    # exit()
 
     click.echo("----------------------------------------")
     click.echo("Deploying model to Serverless Pilot...")
@@ -172,6 +163,9 @@ def deploy(path: str, job: str):
                                        headers={
                                            'Authorization': 'Bearer ' + _get_token(),
                                        })
+            status_resp_json = status_resp.json()
+            if "data" not in status_resp_json or "status" not in status_resp_json["data"]:
+                raise Exception("Error in communication between local and server. Please try it again.")
             new_status = status_resp.json()["data"]["status"]
             if status != new_status:
                 status = new_status
