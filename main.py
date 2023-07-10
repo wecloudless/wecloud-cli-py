@@ -103,9 +103,9 @@ def deploy(path: str, job: str):
 
     # complete the .spilot.yaml
     meta_data_dict = {
-        "job": job,
+        "job_name": job,
         "image": "wangqipeng/wecloud_train:v0.2.0",
-        "setup": ["pip3 install -r requirements.txt"],
+        "setup": "pip3 install -r requirements.txt",
     }
     if not os.path.exists(spilot_fn):
         meta_data_dict["run"] = click.prompt("Please enter the run command")
@@ -117,10 +117,16 @@ def deploy(path: str, job: str):
         except ParserError as e:
             click.echo("yaml format is not correct, exit")
             exit()
+    # print("1111", type(meta_data_dict["run"]), meta_data_dict["run"])
     meta_data_dict["run"] = meta_data_dict["run"].split()
-    meta_data_dict["profile"] = meta_data_dict["run"].copy()
-    print("meta_data_dict", meta_data_dict)
-    saved_spilot_fn = "/tmp/.spilot-{}.yaml".format(_deploy_ts)
+    # meta_data_dict["run"] = [x+'\n' if "\n" not in x else x for x in meta_data_dict["run"] ]
+    meta_data_dict["run"] = '\n'.join(meta_data_dict["run"])+"\n"
+    # print("2222", type(meta_data_dict["run"]), meta_data_dict["run"])
+    meta_data_dict["profile"] = meta_data_dict["run"]
+    # meta_data_dict["profile"] = meta_data_dict["run"].copy()
+    # print("meta_data_dict", meta_data_dict)
+    saved_spilot_fn = "/tmp/new.spilot-{}.yaml".format(_deploy_ts)
+    # saved_spilot_fn=spilot_fn
     with open(saved_spilot_fn, "w") as f:
         yaml.dump(meta_data_dict, f)
     click.echo("save to {}".format(saved_spilot_fn))
@@ -129,13 +135,20 @@ def deploy(path: str, job: str):
     tmp_file_name = "/tmp/wecloud-{}-{}.tar.gz".format(getpass.getuser(), _deploy_ts)
     with tarfile.open(tmp_file_name, "w:gz") as tar:
         log.debug("path: {}".format(path))
-        tar.add(saved_spilot_fn, arcname=".spilot.yaml")
         tar.add(os.path.join(os.getcwd(), path), arcname="")
+        tar.add(saved_spilot_fn, arcname="new.spilot.yaml")
+        # print(os.path.join(os.getcwd(), path))
     click.echo("Packaging project successfully")
-    print(tmp_file_name)
+    # time.sleep(3)
+    # print(tmp_file_name)
+    # exit()
 
     click.echo("----------------------------------------")
     click.echo("Deploying model to Serverless Pilot...")
+    # with tarfile.open(tmp_file_name, "r:gz") as tar:
+    #     print(tar.getnames())
+        # tar.extractall()
+    # exit()
     resp = requests.post(CONFIG.base_url + "/cli/deploy",
                          headers={
                              'Authorization': 'Bearer ' + _get_token(),
@@ -145,7 +158,7 @@ def deploy(path: str, job: str):
                          stream=True)
     log.debug(resp.text)
     if resp.status_code == 200:
-        os.remove(tmp_file_name)
+        # os.remove(tmp_file_name)
         resp_json = resp.json()
         cli_id = resp_json["data"]["cli_id"]
         log.debug("cli_id: {}".format(cli_id))
