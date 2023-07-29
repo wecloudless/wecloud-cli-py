@@ -114,6 +114,7 @@ def deploy(path: str, job: str):
             with open(spilot_fn) as f:
                 d = yaml.safe_load(f)
             meta_data_dict["run"] = d["run"].strip()
+            meta_data_dict["image"] = d["image"]
         except ParserError as e:
             click.echo("yaml format is not correct, exit")
             exit()
