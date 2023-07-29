@@ -19,6 +19,23 @@ ServerlessPilot的使用主要包含四部分
 
 ### 训练代码开发
 
+#### 环境要求
+`ServerlessPilot`提供较为灵活的执行环境。除python和pytorch版本限制外，其他依赖可自行指定，其他依赖需写入`<your_job>/requirements.txt`。
+```
+python=3.7
+pytorch=1.9 or 1.12
+```
+
+#### 训练超参数
+为了支持任务profiling，训练代码的batch size和epoch需要按照指定的格式定义，具体代码如下：
+```Python
+import argparse
+
+parser = argparse.ArgumentParser()
+parser.add_argument('-b', type=int, default=128, help='batch size for dataloader')
+parser.add_argument('--epoch', type=int, default=100, help='num of epochs to train')
+```
+
 #### 任务日志
 为了支持任务profiling和提供必要的调度信息，训练代码需要包含一定格式的任务日志。开发者需要在每次迭代结束处输出下述格式的日志信息，以使用python logging库为例：
 ```Python
@@ -175,6 +192,8 @@ for epoch in range(1, args.epoch + 1):
 
   **⚠️注意⚠️**：关于数据，请同样放在`<workspace relative path>`文件夹内。（目前会把数据一起打包进image，后续会支持将数据上传到nfs以减小image大小）
 
+  **⚠️注意⚠️**：job name中不能带有下划线“_”，否则后续k8s会报错！
+
   ```yaml
   run: 
     python -u train.py --net googlenet --gpu
@@ -274,4 +293,4 @@ for epoch in range(1, args.epoch + 1):
 我们提供了一个端到端的示例，以展示`ServerlessPilot`的运行工作流程。您可以[点击这里](https://disk.pku.edu.cn:443/link/CC7619B71190026088E7B1D8FC206C55)查看示例。
 
 ## 问题反馈
-如果在使用CLI的时候遇到问题，请按照[该样例](https://github.com/wecloudless/wecloud-cli-py/issues/1)提交repo进行反馈。
+如果在使用CLI的时候遇到问题，请按照[该样例](https://github.com/wecloudless/wecloud-cli-py/issues/1)提交issue进行反馈。
