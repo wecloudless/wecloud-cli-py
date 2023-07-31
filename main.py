@@ -170,11 +170,16 @@ def deploy(path: str, job: str):
                 raise Exception("Error in communication between local and server. Please try it again.")
             new_status = status_resp.json()["data"]["status"]
             if status != new_status:
+                if "build_msg" in status_resp_json["data"] and status_resp_json["data"]["build_msg"] != None:
+                    click.echo("Deploying model msg: {}".format(status_resp_json["data"]["build_msg"]))
                 status = new_status
                 click.echo("Deploying model status: {}".format(status))
             time.sleep(2)
-            if status == 'stopped':
+            if status in ['stopped', 'error']:
                 break
+        if status == 'error':
+            click.echo("Deploying model to Serverless Pilot faild! Please check the previous error messages.")
+            return
         click.echo("Deploying model to Serverless Pilot successfully")
         click.echo("----------------------------------------")
         orch_id_resp = requests.get(f"{CONFIG.base_url}/cli/{cli_id}/orch_id",
