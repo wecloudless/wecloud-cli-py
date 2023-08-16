@@ -10,6 +10,11 @@
 
 ## 如何使用 ServerlessPilot
 
+ServerlessPilot目前支持两类作业
+
+- [Naive Job](https://github.com/wecloudless/wecloud-cli-py/#Naive%20Job训练代码开发)
+- [ElasticFlow Job](https://github.com/wecloudless/wecloud-cli-py/#ElasticFlow%20Job训练代码开发)
+
 ServerlessPilot的使用主要包含四部分
 
 - 训练代码开发
@@ -17,17 +22,27 @@ ServerlessPilot的使用主要包含四部分
 - 在网页端部署任务
 - 在网页端监控任务
 
-### 训练代码开发
+### Naive Job训练代码开发
+
+#### 环境要求
+
+`ServerlessPilot`提供较为灵活的执行环境，依赖需写入`<your_job>/requirements.txt`。
+```
+python=3.7
+pytorch=1.9 or 1.12
+```
+用户也可以使用Docker Hub上已有的docker image，或将配置好环境的自定义的docker image打包上传至Docker Hub，然后编辑`.spilot.yaml`文件，使用自定义的docker image:
+```
+image: <user>/<repo>:<tag>
+```
+
+### ElasticFlow Job训练代码开发
 
 #### 环境要求
 `ServerlessPilot`提供较为灵活的执行环境。除python和pytorch版本限制外，其他依赖可自行指定，其他依赖需写入`<your_job>/requirements.txt`。
 ```
 python=3.7
 pytorch=1.9 or 1.12
-```
-用户也可以将配置好环境的自定义的docker image打包上传至Docker Hub，然后编辑`.spilot.yaml`文件，使用自定义的docker image:
-```
-image: <user>/<repo>:<tag>
 ```
 
 #### 训练超参数
@@ -232,17 +247,23 @@ for epoch in range(1, args.epoch + 1):
 
 在网页端部署任务主要包含两步，首先`ServerlessPilot`运行任务并自动解析，预估任务每轮的运行时间，然后给出推荐的部署方案。用户选择一个方案部署任务
 
-#### 任务解析
+#### 任务类型选择与解析
+命令行工具部署完毕之后会转到`ServerlessPilot`的训练任务的控制面板，该面板中用户可以点击`Select Task`然后选择任务，之后可以选择使用推荐配置部署naive job，或者选择部署ElasticFlow job。任务按照ID的字典序排列。
 
-命令行工具部署完毕之后会转到`ServerlessPilot`的训练任务的控制面板，该面板中用户可以查看任务的解析进度，点击`Select Task`然后选择任务即可，任务按照ID的字典序排列。
-
-任务解析主要工作是预测当前任务在特定的配置下的运行时长。以深度学习训练为例，`ServerlessPilot`根据用户使用的数据集，预设的`batch_size`等参数，在不同的配置下运行训练任务，并以此预估训练任务每轮迭代花费的时间和成本。
 
 <img src="assets/image-20230426181534100.png" alt="image-20230426181534100" style="zoom:20%;" />
 
 <img src="assets/image-20230426181836958.png" alt="image-20230426181836958" style="zoom:20%;" />
 
-#### 任务部署
+<img src="assets/image-20230816.png" alt="image-20230816" style="zoom:20%;" />
+
+如果选择部署naive job，ServerlessPilot会直接按照所选择的配置部署任务。
+
+如果选择部署ElasticFlow job，ServerlessPilot会对任务进行解析。
+
+
+#### ElasticFlow Job的解析与部署
+任务解析主要工作是预测当前任务在特定的配置下的运行时长。以深度学习训练为例，`ServerlessPilot`根据用户使用的数据集，预设的`batch_size`等参数，在不同的配置下运行训练任务，并以此预估训练任务每轮迭代花费的时间和成本。
 
 任务解析完成之后，解析的结果会显示在当前页面。ServerlessPilot会自动估计每轮训练的时间并给出部署方案的建议，部署方案包含了任务部署的推荐配置以及预估的时间、预估的花费和推荐的提供商。配置方案包含多种，用户可以根据任务完成时间和花费进行选择，然后使用该方案部署即可。
 
