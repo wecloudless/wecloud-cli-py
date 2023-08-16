@@ -25,7 +25,7 @@ ServerlessPilot的使用主要包含四部分
 python=3.7
 pytorch=1.9 or 1.12
 ```
-用户可以通过编辑`.spilot.yaml`文件，使用配置好环境的自定义的docker image:
+用户也可以将配置好环境的自定义的docker image打包上传至Docker Hub，然后编辑`.spilot.yaml`文件，使用自定义的docker image:
 ```
 image: <user>/<repo>:<tag>
 ```
