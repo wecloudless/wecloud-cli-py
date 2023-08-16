@@ -19,7 +19,7 @@ ServerlessPilot的使用主要包含四部分
 
 - 训练代码开发
   - [Naive Job训练代码开发](https://github.com/wecloudless/wecloud-cli-py/#naive-job训练代码开发)
-  - ElasticFlow Job训练代码开发(https://github.com/wecloudless/wecloud-cli-py/#elasticflow-job训练代码开发)
+  - [ElasticFlow Job训练代码开发](https://github.com/wecloudless/wecloud-cli-py/#elasticflow-job训练代码开发)
 - [使用命令行工具上传任务](https://github.com/wecloudless/wecloud-cli-py/#使用命令行工具上传)
 - [在网页端部署任务](https://github.com/wecloudless/wecloud-cli-py/#使用命令行工具上传)
 - [在网页端监控任务](https://github.com/wecloudless/wecloud-cli-py/#使用命令行工具上传)
