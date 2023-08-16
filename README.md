@@ -25,6 +25,10 @@ ServerlessPilot的使用主要包含四部分
 python=3.7
 pytorch=1.9 or 1.12
 ```
+用户可以通过编辑`.spilot.yaml`文件，使用配置好环境的自定义的docker image:
+```
+image: <user>/<repo>:<tag>
+```
 
 #### 训练超参数
 为了支持任务profiling，训练代码的batch size和epoch需要按照指定的格式定义，具体代码如下：
