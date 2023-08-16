@@ -12,15 +12,17 @@
 
 ServerlessPilot目前支持两类作业
 
-- [Naive Job](https://github.com/wecloudless/wecloud-cli-py/#Naive%20Job训练代码开发)
-- [ElasticFlow Job](https://github.com/wecloudless/wecloud-cli-py/#ElasticFlow%20Job训练代码开发)
+- Naive Job
+- ElasticFlow Job
 
 ServerlessPilot的使用主要包含四部分
 
 - 训练代码开发
-- 使用命令行工具上传任务
-- 在网页端部署任务
-- 在网页端监控任务
+  - [Naive Job训练代码开发](https://github.com/wecloudless/wecloud-cli-py/#naive-job训练代码开发)
+  - ElasticFlow Job训练代码开发(https://github.com/wecloudless/wecloud-cli-py/#elasticflow-job训练代码开发)
+- [使用命令行工具上传任务](https://github.com/wecloudless/wecloud-cli-py/#使用命令行工具上传)
+- [在网页端部署任务](https://github.com/wecloudless/wecloud-cli-py/#使用命令行工具上传)
+- [在网页端监控任务](https://github.com/wecloudless/wecloud-cli-py/#使用命令行工具上传)
 
 ### Naive Job训练代码开发
 
