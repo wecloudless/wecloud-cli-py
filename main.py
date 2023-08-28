@@ -24,9 +24,13 @@ class CONFIG:
     # base_url = "https://hz-t2.matpool.com:27075"
     # deploy_url = "http://101.42.238.229/#/create-deployment"
     
+    # linggui
+    base_url = "http://192.168.20.175/api/v1"
+    deploy_url = "http://192.168.20.175/#/create-deployment"
+    
     # pkucs
-    base_url = "http://115.27.161.208/api/v1"
-    deploy_url = "http://115.27.161.208/#/create-deployment"
+    # base_url = "http://115.27.161.208/api/v1"
+    # deploy_url = "http://115.27.161.208/#/create-deployment"
     
     # xinjin
     # base_url = "http://162.105.175.222:8081"
