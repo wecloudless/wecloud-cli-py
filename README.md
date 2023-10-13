@@ -31,7 +31,7 @@ ServerlessPilot的使用主要包含四部分
 `ServerlessPilot`提供较为灵活的执行环境，依赖需写入`<your_job>/requirements.txt`。
 ```
 python=3.7
-pytorch=1.9 or 1.12
+pytorch=1.9 (对应镜像wangqipeng/wecloud_train:v0.2.0) or 1.13 (对应镜像wangqipeng/wecloud_train:v0.3.0)
 ```
 用户也可以使用Docker Hub上已有的docker image，或将配置好环境的自定义的docker image打包上传至Docker Hub，然后编辑`.spilot.yaml`文件，使用自定义的docker image:
 ```
@@ -44,7 +44,7 @@ image: <user>/<repo>:<tag>
 `ServerlessPilot`提供较为灵活的执行环境。除python和pytorch版本限制外，其他依赖可自行指定，其他依赖需写入`<your_job>/requirements.txt`。
 ```
 python=3.7
-pytorch=1.9 or 1.12
+pytorch=1.9 (对应镜像wangqipeng/wecloud_train:v0.2.0) or 1.13 (对应镜像wangqipeng/wecloud_train:v0.3.0)
 ```
 
 #### 训练超参数
