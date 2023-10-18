@@ -31,7 +31,7 @@ ServerlessPilot的使用主要包含四部分
 `ServerlessPilot`提供较为灵活的执行环境，依赖需写入`<your_job>/requirements.txt`。
 ```
 python=3.7
-pytorch=1.9 or 1.12
+pytorch=1.9 (对应镜像wangqipeng/wecloud_train:v0.2.0) or 1.13 (对应镜像wangqipeng/wecloud_train:v0.3.0)
 ```
 用户也可以使用Docker Hub上已有的docker image，或将配置好环境的自定义的docker image打包上传至Docker Hub，然后编辑`.spilot.yaml`文件，使用自定义的docker image:
 ```
@@ -44,7 +44,7 @@ image: <user>/<repo>:<tag>
 `ServerlessPilot`提供较为灵活的执行环境。除python和pytorch版本限制外，其他依赖可自行指定，其他依赖需写入`<your_job>/requirements.txt`。
 ```
 python=3.7
-pytorch=1.9 or 1.12
+pytorch=1.9 (对应镜像wangqipeng/wecloud_train:v0.2.0) or 1.13 (对应镜像wangqipeng/wecloud_train:v0.3.0)
 ```
 
 #### 训练超参数
@@ -57,7 +57,7 @@ parser.add_argument('-b', type=int, default=128, help='batch size for dataloader
 parser.add_argument('--epoch', type=int, default=100, help='num of epochs to train')
 ```
 
-#### 任务日志
+<!-- #### 任务日志
 为了支持任务profiling和提供必要的调度信息，训练代码需要包含一定格式的任务日志。开发者需要在每次迭代结束处输出下述格式的日志信息，以使用python logging库为例：
 ```Python
   # in the end of one iteration
@@ -66,7 +66,40 @@ parser.add_argument('--epoch', type=int, default=100, help='num of epochs to tra
       logging.info(f"PROFILING: dataset total number {len(dataloader.dataset)}, training one batch costs {one_batch_time} seconds")
       return
 ```
-较高打印日志的频率可以提高profiling和调度的精确度，较低打印日志的频率可以降低日志量，开发者可自行决定日志的打印频率。
+较高打印日志的频率可以提高profiling和调度的精确度，较低打印日志的频率可以降低日志量，开发者可自行决定日志的打印频率。 -->
+
+#### 任务日志
+为了支持任务profiling以提供必要的调度信息，训练代码需要提供相关任务日志。只需在用户代码中使用[W&B](https://wandb.ai/site)即可。需修改的代码如下：
+```Python
+# 程序开始处
+import wandb
+wandb.login(
+  key="local-0b4dd77e45ad93ff68db22067d0d0f3ef9323636", 
+  host="http://115.27.161.208:8081/"
+)
+run = wandb.init(
+    project="<your_project_name>",
+    entity="adminadmin",
+    config={
+        # any configs you need in the following way
+        "learning_rate": args.lr,
+        "epochs": args.epoch,
+        "batch_size": args.b,
+        "network": args.net
+    }
+)
+
+# 每轮迭代处更新下述信息，至少应包含列出的项
+wandb.log({
+    "epoch": epoch,
+    "iteration": n_iter,
+    "trained_samples": batch_index * args.b + len(images),
+    "total_samples": len(cifar100_training_loader.dataset),
+    "loss": loss.item(),
+    "current_epoch_wall-clock_time": time.time() - epoch_start_time
+})
+```
+**⚠️注意⚠️**：`wandb.log`中至少应包含上述列出的信息。
 
 #### 弹性训练
 为了支持弹性训练和间断训练，训练代码需要支持断点。开发者需要将每个epoch的模型参数存储在开发者指定的固定位置，并将文件名命名为指定的格式：
