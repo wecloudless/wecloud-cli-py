@@ -69,7 +69,7 @@ parser.add_argument('--epoch', type=int, default=100, help='num of epochs to tra
 较高打印日志的频率可以提高profiling和调度的精确度，较低打印日志的频率可以降低日志量，开发者可自行决定日志的打印频率。 -->
 
 #### 任务日志
-为了支持任务profiling以提供必要的调度信息，训练代码需要提供相关任务日志。只需在用户代码中使用[W&B](https://wandb.ai/site)即可。需修改的代码如下：
+为了支持任务profiling以提供必要的调度信息，训练代码需要提供相关任务日志。只需在用户代码中使用[W&B](https://wandb.ai/site)即可。所有执行环境会默认安装W&B，无需用户指定安装。需修改的代码如下：
 ```Python
 # 程序开始处
 import wandb
