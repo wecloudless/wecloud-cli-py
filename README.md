@@ -37,6 +37,13 @@ pytorch=1.9 (对应镜像wangqipeng/wecloud_train:v0.2.0) or 1.13 (对应镜像w
 ```
 image: <user>/<repo>:<tag>
 ```
+#### 使用要求
+用户仅需在代码目录中放置`.spilot.yaml`文件即可（[样例](https://github.com/wecloudless/wecloud_example/blob/main/.spilot.yaml)），需要包含：
+```
+image: # 使用的镜像信息
+setup: # 配置镜像外环境的指令
+run: # 执行任务的指令
+```
 
 ### ElasticFlow Job训练代码开发
 
