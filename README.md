@@ -91,12 +91,9 @@ run = wandb.init(
 
 # 每轮迭代处更新下述信息，至少应包含列出的项
 wandb.log({
-    "epoch": epoch,
-    "iteration": n_iter,
-    "trained_samples": batch_index * args.b + len(images),
-    "total_samples": len(cifar100_training_loader.dataset),
-    "loss": loss.item(),
-    "current_epoch_wall-clock_time": time.time() - epoch_start_time
+    "iteration": n_iter, # 从训练开始到现在的总迭代轮数
+    "trained_samples": batch_index * args.b + len(images), # 在当前epoch中，已使用的数据个数
+    "total_samples": len(cifar100_training_loader.dataset) # 数据集中总数据个数
 })
 ```
 **⚠️注意⚠️**：`wandb.log`中至少应包含上述列出的信息。
