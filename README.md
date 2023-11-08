@@ -31,14 +31,23 @@ ServerlessPilot的使用主要包含四部分
 `ServerlessPilot`提供较为灵活的执行环境，依赖需写入`<your_job>/requirements.txt`。
 ```
 python=3.7
-pytorch=1.9 (对应镜像wangqipeng/wecloud_train:v0.2.0) or 1.13 (对应镜像wangqipeng/wecloud_train:v0.3.0)
+pytorch=1.13 (对应镜像wangqipeng/wecloud_train:v0.3.0)
 ```
 用户也可以使用Docker Hub上已有的docker image，或将配置好环境的自定义的docker image打包上传至Docker Hub，然后编辑`.spilot.yaml`文件，使用自定义的docker image:
 ```
 image: <user>/<repo>:<tag>
 ```
 #### 使用要求
-用户仅需在代码目录中放置`.spilot.yaml`文件即可（[样例](https://github.com/wecloudless/wecloud_example/blob/main/.spilot.yaml)），需要包含：
+用户需使用`torch.distributed`实现分布式训练代码，初始化方式如下：
+```PyThon
+local_rank = int(os.environ["LOCAL_RANK"])
+rank = local_rank
+torch.cuda.set_device(local_rank)
+dist.init_process_group(backend="nccl")
+device = torch.device("cuda:{}".format(rank))
+```
+
+并在代码目录中放置`.spilot.yaml`文件即可（[样例](https://github.com/wecloudless/wecloud_example/blob/main/.spilot.yaml)），需要包含：
 ```
 image: # 使用的镜像信息
 setup: # 配置镜像外环境的指令
@@ -51,7 +60,17 @@ run: # 执行任务的指令
 `ServerlessPilot`提供较为灵活的执行环境。除python和pytorch版本限制外，其他依赖可自行指定，其他依赖需写入`<your_job>/requirements.txt`。
 ```
 python=3.7
-pytorch=1.9 (对应镜像wangqipeng/wecloud_train:v0.2.0) or 1.13 (对应镜像wangqipeng/wecloud_train:v0.3.0)
+pytorch=1.13 (对应镜像wangqipeng/wecloud_train:v0.3.0)
+```
+
+#### 分布式支持
+用户需使用`torch.distributed`实现分布式训练代码，初始化方式如下：
+```PyThon
+local_rank = int(os.environ["LOCAL_RANK"])
+rank = local_rank
+torch.cuda.set_device(local_rank)
+dist.init_process_group(backend="nccl")
+device = torch.device("cuda:{}".format(rank))
 ```
 
 #### 训练超参数
