@@ -74,7 +74,7 @@ torch.cuda.set_device(local_rank)
 dist.init_process_group(backend="nccl")
 device = torch.device("cuda:{}".format(rank))
 ```
-**⚠️注意⚠️**：由于torch.distributed分布式训练时数据集的下载可能冲突，请在.spilot.yaml/setup中执行下载数据集的脚本，并在代码中使用本地数据集，数据集路径请使用相对路径。
+**⚠️注意⚠️**：为避免分布式训练任务重复下载数据集，请在.spilot.yaml/setup中执行下载数据集的脚本，并在代码中使用下载好的本地数据集。
 
 #### 训练超参数
 为了支持任务profiling，训练代码的batch size和epoch需要按照指定的格式定义，具体代码如下：
