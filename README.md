@@ -66,12 +66,15 @@ pytorch=1.13 (对应镜像wangqipeng/wecloud_train:v0.3.0)
 #### 分布式支持
 用户需使用`torch.distributed`实现分布式训练代码，初始化方式如下：
 ```PyThon
+import torch.distributed as dist
+
 local_rank = int(os.environ["LOCAL_RANK"])
 rank = local_rank
 torch.cuda.set_device(local_rank)
 dist.init_process_group(backend="nccl")
 device = torch.device("cuda:{}".format(rank))
 ```
+**⚠️注意⚠️**：由于torch.distributed分布式训练时数据集的下载可能冲突，请在.spilot.yaml/setup中执行下载数据集的脚本，并在代码中使用本地数据集，数据集路径请使用相对路径。
 
 #### 训练超参数
 为了支持任务profiling，训练代码的batch size和epoch需要按照指定的格式定义，具体代码如下：
