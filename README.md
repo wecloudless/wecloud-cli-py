@@ -104,13 +104,13 @@ wandb.log({
 #### 弹性训练
 为了支持弹性训练和间断训练，训练代码需要支持断点。开发者需要将每个epoch的模型参数存储在开发者指定的固定位置，并将文件名命名为指定的格式：
 ```Python
-weights_path = checkpoint_path.format(net=args.net, epoch=epoch, type='regular')
-torch.save(net.state_dict(), weights_path)
+checkpoint_path = '/app/output/checkpoint'
+torch.save(net.state_dict(), checkpoint_path)
 ```
 开始训练之前需要先保证该指定路径存在：
 ```Python
 #prepare folder
-cmd = 'mkdir -p ' + os.path.join(settings.CHECKPOINT_PATH, args.net)
+cmd = 'mkdir -p ' + checkpoint_path
 #python 2.7 & 3
 ret = subprocess.check_output(cmd, shell=True)
 ```
@@ -174,29 +174,8 @@ def best_acc_weights(weights_folder):
     best_files = sorted(best_files, key=lambda w: int(re.search(regex_str, w).groups()[1]))
     return best_files[-1]
 
-best_acc = 0.0
-recent_folder = most_recent_folder(os.path.join(settings.CHECKPOINT_PATH, args.net), fmt=settings.DATE_FORMAT)
-if not recent_folder:
-        resume_epoch = 0
-        checkpoint_path = os.path.join(settings.CHECKPOINT_PATH, args.net, settings.TIME_NOW)
-    else:
-        resume_epoch = last_epoch(os.path.join(settings.CHECKPOINT_PATH, args.net, recent_folder))
-        best_weights = best_acc_weights(os.path.join(settings.CHECKPOINT_PATH, args.net, recent_folder))
-        if best_weights:
-            weights_path = os.path.join(settings.CHECKPOINT_PATH, args.net, recent_folder, best_weights)
-            logging.info('found best acc weights file:{}'.format(weights_path))
-            logging.info('load best training file to test acc...')
-            net.load_state_dict(torch.load(weights_path))
-            best_acc = eval_training(tb=False)
-            logging.info('best acc is {:0.2f}'.format(best_acc))
-        recent_weights_file = most_recent_weights(os.path.join(settings.CHECKPOINT_PATH, args.net, recent_folder))
-        if not recent_weights_file:
-            raise Exception('no recent weights file were found')
-        weights_path = os.path.join(settings.CHECKPOINT_PATH, args.net, recent_folder, recent_weights_file)
-        logging.info('loading weights file {} to resume training.....'.format(weights_path))
-        net.load_state_dict(torch.load(weights_path))
-
-        checkpoint_path = os.path.join(settings.CHECKPOINT_PATH, args.net, recent_folder)
+resume_epoch = last_epoch(checkpoint_path)
+checkpoint_dir = os.path.join(checkpoint_path, '{epoch}')
 ```
 训练时需从上一次保存权重的进度继续训练：
 ```Python
