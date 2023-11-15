@@ -128,13 +128,11 @@ wandb.log({
 **⚠️注意⚠️**：`wandb.log`中至少应包含上述列出的信息。
 
 #### 弹性训练
-为了支持弹性训练和间断训练，训练代码需要支持断点。开发者需要将每个epoch的模型参数存储在开发者指定的固定位置，并将文件名命名为指定的格式：
-```Python
-checkpoint_path = '/app/output/checkpoint'
-torch.save(net.state_dict(), checkpoint_path)
-```
+为了支持弹性训练和间断训练，训练代码需要支持断点。开发者需要将每个epoch的模型参数存储在开发者指定的固定位置，并将文件名命名为指定的格式。
+
 开始训练之前需要先保证该指定路径存在：
 ```Python
+checkpoint_path = '/app/output/checkpoint'
 #prepare folder
 cmd = 'mkdir -p ' + checkpoint_path
 #python 2.7 & 3
@@ -208,6 +206,10 @@ checkpoint_dir = os.path.join(checkpoint_path, '{epoch}')
 for epoch in range(1, args.epoch + 1):
     if epoch <= resume_epoch:
         continue
+```
+checkpoint文件需要保存在指定的位置：
+```Python
+torch.save(net.state_dict(), checkpoint_dir)
 ```
 
 ### 使用命令行工具上传
