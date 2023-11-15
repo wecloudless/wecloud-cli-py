@@ -31,11 +31,27 @@ ServerlessPilot的使用主要包含四部分
 `ServerlessPilot`提供较为灵活的执行环境，依赖需写入`<your_job>/requirements.txt`。
 ```
 python=3.7
-pytorch=1.9 (对应镜像wangqipeng/wecloud_train:v0.2.0) or 1.13 (对应镜像wangqipeng/wecloud_train:v0.3.0)
+pytorch=1.13 (对应镜像wangqipeng/wecloud_train:v0.3.0)
 ```
 用户也可以使用Docker Hub上已有的docker image，或将配置好环境的自定义的docker image打包上传至Docker Hub，然后编辑`.spilot.yaml`文件，使用自定义的docker image:
 ```
 image: <user>/<repo>:<tag>
+```
+#### 使用要求
+用户需使用`torch.distributed`实现分布式训练代码，初始化方式如下：
+```PyThon
+local_rank = int(os.environ["LOCAL_RANK"])
+rank = local_rank
+torch.cuda.set_device(local_rank)
+dist.init_process_group(backend="nccl")
+device = torch.device("cuda:{}".format(rank))
+```
+
+并在代码目录中放置`.spilot.yaml`文件即可（[样例](https://github.com/wecloudless/wecloud_example/blob/main/.spilot.yaml)），需要包含：
+```
+image: # 使用的镜像信息
+setup: # 配置镜像外环境的指令
+run: # 执行任务的指令
 ```
 
 ### ElasticFlow Job训练代码开发
@@ -44,8 +60,21 @@ image: <user>/<repo>:<tag>
 `ServerlessPilot`提供较为灵活的执行环境。除python和pytorch版本限制外，其他依赖可自行指定，其他依赖需写入`<your_job>/requirements.txt`。
 ```
 python=3.7
-pytorch=1.9 (对应镜像wangqipeng/wecloud_train:v0.2.0) or 1.13 (对应镜像wangqipeng/wecloud_train:v0.3.0)
+pytorch=1.13 (对应镜像wangqipeng/wecloud_train:v0.3.0)
 ```
+
+#### 分布式支持
+用户需使用`torch.distributed`实现分布式训练代码，初始化方式如下：
+```PyThon
+import torch.distributed as dist
+
+local_rank = int(os.environ["LOCAL_RANK"])
+rank = local_rank
+torch.cuda.set_device(local_rank)
+dist.init_process_group(backend="nccl")
+device = torch.device("cuda:{}".format(rank))
+```
+**⚠️注意⚠️**：为避免分布式训练任务重复下载数据集，请在.spilot.yaml/setup中执行下载数据集的脚本，并在代码中使用下载好的本地数据集。
 
 #### 训练超参数
 为了支持任务profiling，训练代码的batch size和epoch需要按照指定的格式定义，具体代码如下：
@@ -91,12 +120,9 @@ run = wandb.init(
 
 # 每轮迭代处更新下述信息，至少应包含列出的项
 wandb.log({
-    "epoch": epoch,
-    "iteration": n_iter,
-    "trained_samples": batch_index * args.b + len(images),
-    "total_samples": len(cifar100_training_loader.dataset),
-    "loss": loss.item(),
-    "current_epoch_wall-clock_time": time.time() - epoch_start_time
+    "iteration": n_iter, # 从训练开始到现在的总迭代轮数
+    "trained_samples": batch_index * args.b + len(images), # 在当前epoch中，已使用的数据个数
+    "total_samples": len(cifar100_training_loader.dataset) # 数据集中总数据个数
 })
 ```
 **⚠️注意⚠️**：`wandb.log`中至少应包含上述列出的信息。
