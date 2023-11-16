@@ -149,7 +149,7 @@ def most_recent_weights(weights_folder):
     if len(weight_files) == 0:
         return ''
 
-    regex_str = r'([A-Za-z0-9]+)-([0-9]+)-(regular|best)'
+    regex_str = r'([0-9]+)'
 
     # sort files by epoch
     weight_files = sorted(weight_files, key=lambda w: int(re.search(regex_str, w).groups()[1]))
