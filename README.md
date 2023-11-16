@@ -146,7 +146,7 @@ def most_recent_weights(weights_folder):
         if folder is empty return empty string
     """
     weight_files = os.listdir(weights_folder)
-    if len(weights_folder) == 0:
+    if len(weight_files) == 0:
         return ''
 
     regex_str = r'([A-Za-z0-9]+)-([0-9]+)-(regular|best)'
