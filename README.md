@@ -47,7 +47,7 @@ dist.init_process_group(backend="nccl")
 device = torch.device("cuda:{}".format(rank))
 ```
 
-并在代码目录中放置`.spilot.yaml`文件即可（[样例](https://github.com/wecloudless/wecloud_example/blob/main/.spilot.yaml)），需要包含：
+并在代码目录中放置`.spilot.yaml`文件即可（[样例](https://github.com/qipengwang/wecloud_train/blob/distributed/.spilot.yaml)），需要包含：
 ```
 image: # 使用的镜像信息
 setup: # 配置镜像外环境的指令
