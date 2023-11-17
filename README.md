@@ -154,7 +154,7 @@ def most_recent_weights(weights_folder):
     regex_str = r'([0-9]+)'
 
     # sort files by epoch
-    weight_files = sorted(weight_files, key=lambda w: int(re.search(regex_str, w).groups()[1]))
+    weight_files = sorted(weight_files, key=lambda w: int(re.search(regex_str, w).groups()[0]))
 
     return weight_files[-1]
 
@@ -162,7 +162,7 @@ def last_epoch(weights_folder):
     weight_file = most_recent_weights(weights_folder)
     if not weight_file:
        raise Exception('no recent weights were found')
-    resume_epoch = int(weight_file.split('-')[1])
+    resume_epoch = int(weight_file)
 
     return resume_epoch
 
