@@ -310,9 +310,7 @@ torch.save(net.state_dict(), checkpoint_dir)
 
 #### 下载任务输出
 
-在上传任务代码时，请将所有需要输出的文件（例如训练得到的模型检查点）输出到目录`./output`内（**必须使用相对于本地项目文件夹的相对路径，不能使用绝对路径**）。例如，本地项目路径是`~/training-job/`，则应输出到`~/training-job/output`内，由于要使用相对`~/training-job/`的相对路径，因此项目内输出路径应设置为`./output`。
-
-**这里推荐大家直接使用`./output`作为输出文件夹。**
+在上传任务代码时，请将所有需要输出的文件（例如训练得到的模型检查点）输出到目录`/app/output/checkpoint/{epoch}`内（绝对路径, epoch为当前训练到第几个epoch，从1开始）。
 
 #### 在总体（Overall）面板监控
 
