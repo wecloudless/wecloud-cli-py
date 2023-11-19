@@ -47,12 +47,14 @@ dist.init_process_group(backend="nccl")
 device = torch.device("cuda:{}".format(rank))
 ```
 
-并在代码目录中放置`.spilot.yaml`文件即可（[样例](https://github.com/wecloudless/wecloud_example/blob/main/.spilot.yaml)），需要包含：
+并在代码目录中放置`.spilot.yaml`文件即可（[样例](https://github.com/qipengwang/wecloud_train/blob/distributed/.spilot.yaml)），需要包含：
 ```
 image: # 使用的镜像信息
 setup: # 配置镜像外环境的指令
 run: # 执行任务的指令
 ```
+**⚠️注意⚠️**：本平台使用[torchrun](https://pytorch.org/docs/stable/elastic/run.html)指令启动任务。除模型、数据集可能需要指定分布式外，其他代码与单卡训练无异，不需要使用例如`torch.multiprocessing.spawn`等实现分布式的功能。
+
 
 ### ElasticFlow Job训练代码开发
 
@@ -146,13 +148,13 @@ def most_recent_weights(weights_folder):
         if folder is empty return empty string
     """
     weight_files = os.listdir(weights_folder)
-    if len(weights_folder) == 0:
+    if len(weight_files) == 0:
         return ''
 
-    regex_str = r'([A-Za-z0-9]+)-([0-9]+)-(regular|best)'
+    regex_str = r'([0-9]+)'
 
     # sort files by epoch
-    weight_files = sorted(weight_files, key=lambda w: int(re.search(regex_str, w).groups()[1]))
+    weight_files = sorted(weight_files, key=lambda w: int(re.search(regex_str, w).groups()[0]))
 
     return weight_files[-1]
 
@@ -160,7 +162,7 @@ def last_epoch(weights_folder):
     weight_file = most_recent_weights(weights_folder)
     if not weight_file:
        raise Exception('no recent weights were found')
-    resume_epoch = int(weight_file.split('-')[1])
+    resume_epoch = int(weight_file)
 
     return resume_epoch
 
