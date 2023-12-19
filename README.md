@@ -320,7 +320,8 @@ torch.save(net.state_dict(), checkpoint_dir)
 
 <img src="assets/image-20230426184208766.png" alt="image-20230426184208766" style="zoom:20%;" />
 
-
+## Profiling机制
+ElasticFlow job的执行需要Serverless Pilot平台在job被部署前预先执行作业，并对作业的step time进行profile。Serverless Pilot平台在作业预执行时依赖[wandb](https://wandb.ai)监控作业进程，后端通过wandb提供的API读取记录到的相应field，并用其来预估作业在不同资源配置方案下的完成时间。
 
 ## 示例
 
